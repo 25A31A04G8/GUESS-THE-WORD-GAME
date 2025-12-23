@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#define MAX_ATTEMPTS 6
+#define WORD_COUNT 6
+#define WORD_LENGTH 20
+
+// Words and hints
+char words[WORD_COUNT][WORD_LENGTH] = {
+    "python",
+    "github",
+    "computer",
+    "keyboard",
+    "internet",
+    "program"
+};
+
+char hints[WORD_COUNT][50] = {
+    "A popular programming language",
+    "Platform for hosting code",
+    "An electronic device",
+    "Used to type",
+    "Connects the world",
+    "Set of instructions"
+};
+
+void playGame() {
+    srand(time(NULL));
+    int index = rand() % WORD_COUNT;
+
+    char word[WORD_LENGTH];
+    strcpy(word, words[index]);
+    char hint[50];
+    strcpy(hint, hints[index]);
+
+    int guessed[26] = {0};
+    int attempts = MAX_ATTEMPTS;
+    int correct = 0;
+
+    printf("\n🎯 GUESS THE WORD GAME 🎯\n");
+    printf("You have %d attempts.\n", MAX_ATTEMPTS);
+
+    while (attempts > 0) {
+        correct = 1;
+        printf("\nWord: ");
+
+        for (int i = 0; i < strlen(word); i++) {
+            if (guessed[word[i] - 'a']) {
+                printf("%c ", word[i]);
+            } else {
+                printf("_ ");
+                correct = 0;
+            }
+        }
+
+        if (correct) {
+            printf("\n🎉 YOU WON! The word is: %s\n", word);
+            return;
+        }
+
+        printf("\nAttempts left: %d", attempts);
+        if (attempts == 3) {
+            printf("\n💡 Hint: %s", hint);
+        }
+
+        printf("\nEnter a letter: ");
+        char ch;
+        scanf(" %c", &ch);
+
+        if (ch < 'a' || ch > 'z') {
+            printf("❌ Enter lowercase letters only.");
+            continue;
+        }
+
+        if (guessed[ch - 'a']) {
+            printf("⚠️ Already guessed.");
+            continue;
+        }
+
+        guessed[ch - 'a'] = 1;
+
+        if (!strchr(word, ch)) {
+            attempts--;
+            printf("❌ Wrong guess!");
+        } else {
+            printf("✅ Correct!");
+        }
+    }
+
+    printf("\n💀 GAME OVER! The word was: %s\n", word);
+}
+
+int main() {
+    char choice;
+
+    do {
+        playGame();
+        printf("\nPlay again? (y/n): ");
+        scanf(" %c", &choice);
+    } while (choice == 'y' || choice == 'Y');
+
+    printf("\nThanks for playing! 👋\n");
+    return 0;
+}
